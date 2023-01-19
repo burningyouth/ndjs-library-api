@@ -1,0 +1,19 @@
+{
+  "name": "ndjs-library-api",
+  "version": "1.0.0",
+  "module": "index.js",
+  "repository": "https://github.com/burningyouth/ndjs-library-api.git",
+  "author": "Nikita Sokolov <mr.sokolov99@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "pm2 start src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pm2": "^5.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
