@@ -11,39 +11,35 @@ router
   .get((_, res) => {
     res.status(200).json(Object.values(db.books));
   })
-  .post((req, res) => {
+  .post(fileMulter.single("fileBook"), (req, res) => {
     const book = req.body;
-    if (!book?.id)
-      return res.status(400).json({ error: "Book id is required" });
-    if (db.books[book.id])
-      return res.status(400).json({ error: "Book exists" });
-    db.books[book.id] = book;
-    res.status(201).json(book);
+    const id = Object.keys(db.books).length + 1;
+    const path = req.file.path;
+
+    if (!book) return res.status(400).json({ error: "Book not given" });
+    if (!req.file)
+      return res.status(400).json({ error: "Book.fileBook not given" });
+
+    db.books[id] = { id, fileBook: path, ...book };
+    res.status(201).json(db.books[id]);
   });
 
-router.use("/books/:id", (req, res, next) => {
+const checkIfBookExists = (req, res, next) => {
   const id = req.params.id;
   const book = db.books[id];
   if (!book || !id) return res.status(404).json({ error: "Book not found" });
   next();
-});
+};
 
 router
   .route("/books/:id")
-  .post(fileMulter.single("data"), (req, res) => {
-    const id = req.params.id;
-    if (!req.file) return res.status(400).json({ error: "File not given" });
-    const path = req.file.path;
-    res.status(200).json({ path });
-    db.books[id].fileBook = path;
-  })
-  .get((req, res) => {
+  .get(checkIfBookExists, (req, res) => {
     const id = req.params.id;
     const book = db.books[id];
 
     res.status(200).json(book);
   })
-  .put((req, res) => {
+  .put(checkIfBookExists, (req, res) => {
     const id = req.params.id;
     const book = db.books[id];
 
@@ -52,10 +48,18 @@ router
     db.books[id] = newBook;
     res.status(200).json(newBook);
   })
-  .delete((req, res) => {
+  .delete(checkIfBookExists, (req, res) => {
     const id = req.params.id;
     delete db.books[id];
     res.status(200).send("ok");
   });
+
+router.get("/books/:id/download", (req, res) => {
+  const id = req.params.id;
+  const book = db.books[id];
+  if (!book?.fileBook)
+    return res.status(404).json({ error: "Book file not found" });
+  res.download(book.fileBook);
+});
 
 module.exports = router;
