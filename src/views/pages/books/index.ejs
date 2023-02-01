@@ -1,0 +1,27 @@
+<%- include('../../layout/header', {title: "Books list"}) %> <% if
+(books.length) { %>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Authors</th>
+      <th scope="col">Favorite</th>
+      <th scope="col" class="text-end">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% books.forEach((data) => { %>
+    <tr class="relative">
+      <th scope="row"><%= data.id %></th>
+      <td><%= data.title %></td>
+      <td><%= data.authors %></td>
+      <td><%= data.favorite %></td>
+      <td class="text-end"><a href="update/<%=data.id%>" type="button" class="btn btn-primary">Edit</a></td>
+    </tr>
+    <% }); %>
+  </tbody>
+</table>
+<% } else { %>
+<p>No books found</p>
+<% } %> <%- include('../../layout/footer') %>
