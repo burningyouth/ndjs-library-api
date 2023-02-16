@@ -1,6 +1,5 @@
 const express = require("express");
-const model = require("../../models/books");
-
+const client = require("../../shared/httpClient");
 const router = express.Router();
 
 const transformId = (req, res, next) => {
@@ -12,8 +11,15 @@ const transformId = (req, res, next) => {
   next();
 };
 
-router.get("/", (_, res) => {
-  res.render("pages/books/index", { books: model.getBooks() });
+router.get("/", async (_, res) => {
+  console.log(process.env);
+  try {
+    const books = await client.get("/books");
+    res.render("pages/books/index", { books: books });
+  } catch (e) {
+    res.status(400);
+    res.json(e);
+  }
 });
 
 router.get("/create", (_, res) => {
@@ -28,10 +34,6 @@ router.get("/update/:id", transformId, (req, res) => {
   res.render("pages/books/update", {
     book: req.book,
   });
-});
-
-router.get("*", transformId, (req, res) => {
-  res.render("pages/404");
 });
 
 module.exports = router;
