@@ -12,11 +12,11 @@ const transformId = (req, res, next) => {
 };
 
 router.get("/", async (_, res) => {
-  console.log(process.env);
   try {
     const books = await client.get("/books");
     res.render("pages/books/index", { books: books });
   } catch (e) {
+    console.log(e);
     res.status(400);
     res.json(e);
   }

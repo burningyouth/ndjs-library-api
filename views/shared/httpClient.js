@@ -1,5 +1,7 @@
 const axios = require("axios");
 
-module.exports = axios.create({
-  baseUrl: process.env.API_URL,
+const client = axios.create({
+  baseURL: process.env.API_URL,
 });
+
+module.exports = client;

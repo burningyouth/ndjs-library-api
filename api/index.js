@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use("/", auth);
-//app.use("/", books);
+app.use("/", books);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "/uploads/")));
