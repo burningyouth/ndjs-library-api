@@ -1,5 +1,7 @@
 node_modules
-api/uploads/**/*
-!api/uploads/.gitkeep
+uploads/**/*
+!uploads/.gitkeep
 *.rdb
 .DS_Store
+
+data

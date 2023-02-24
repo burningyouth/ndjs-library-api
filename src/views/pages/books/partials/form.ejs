@@ -39,6 +39,7 @@
     const authors = document.querySelector("#authors").value;
     const description = document.querySelector("#description").value;
     const fileBook = document.querySelector("#formFile")?.value;
+
     const data = {
       title,
       description,
@@ -49,7 +50,7 @@
     for (const name in data) {
       formData.append(name, data[name]);
     }
-    fetch("<%=process.env.API_URL%>/books<%= book ? `/${book.id}` : '' %>", {
+    fetch("/api/books<%= book ? `/${book.id}` : '' %>", {
       method: "<%= book ? `put` : 'post' %>",
       body: formData,
     })
@@ -57,7 +58,7 @@
         if (res.status >= 400) {
           throw new Error(res.statusText);
         }
-        //window.location.href = "/"
+        //window.location.href = "/";
       })
       .catch((data) => console.error(data));
   });

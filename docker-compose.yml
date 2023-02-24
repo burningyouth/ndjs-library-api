@@ -4,30 +4,16 @@ services:
     volumes:
       - ./data:/data
 
-  api:
-    image: node:19-alpine
-    environment:
-      - PORT=3001
-      - REDIS_URL=redis://storage
-    ports:
-      - 3001:3001
-    working_dir: /api
-    volumes:
-      - ./api:/api
-    command: yarn dev
-    depends_on:
-      - storage
-
   view:
     image: node:19-alpine
     environment:
       - PORT=3000
-      - API_URL=http://api:3001/api
+      - REDIS_URL=redis://storage
     ports:
       - 3000:3000
-    working_dir: /view
+    working_dir: /app
     volumes:
-      - ./views:/view
+      - .:/app
     command: yarn dev
     depends_on:
-      - api
+      - storage

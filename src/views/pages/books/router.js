@@ -1,6 +1,7 @@
 const express = require("express");
-const client = require("../../shared/httpClient");
 const router = express.Router();
+const model = require("../../../models/books");
+const counter = require("../../../models/counter");
 
 const transformId = (req, res, next) => {
   const id = +req.params.id;
@@ -12,22 +13,19 @@ const transformId = (req, res, next) => {
 };
 
 router.get("/", async (_, res) => {
-  try {
-    const books = await client.get("/books");
-    res.render("pages/books/index", { books: books });
-  } catch (e) {
-    console.log(e);
-    res.status(400);
-    res.json(e);
-  }
+  res.render("pages/books/index", { books: model.getBooks() });
 });
 
 router.get("/create", (_, res) => {
-  res.render("pages/books/create", { create: model.addBook });
+  res.render("pages/books/create");
 });
 
-router.get("/:id", transformId, (req, res) => {
-  res.render("pages/books/view", { book: req.book });
+router.get("/:id", transformId, async (req, res) => {
+  res.render("pages/books/view", {
+    book: req.book,
+    count: +(await counter.getCount(req.book.id)) + 1,
+  });
+  counter.increment(req.book.id);
 });
 
 router.get("/update/:id", transformId, (req, res) => {
