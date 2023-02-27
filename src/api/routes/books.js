@@ -1,60 +1,83 @@
 const express = require("express");
 const fileMulter = require("../middlewares/files");
-const model = require("../../models/books");
+const Book = require("../../models/books");
 
 const router = express.Router();
 
 router
   .route("/books")
-  .get((_, res) => {
-    res.status(200).json(model.getBooks());
+  .get(async (_, res) => {
+    try {
+      const books = await Book.find().select("-__v");
+      res.status(200).json(books);
+    } catch (e) {
+      res.status(500).json(e);
+    }
   })
-  .post(fileMulter.single("fileBook"), (req, res) => {
-    const book = req.body;
-    if (!book) return res.status(400).json({ error: "Book not given" });
+  .post(fileMulter.single("fileBook"), async (req, res) => {
+    if (!req.body) return res.status(400).json({ error: "Book not given" });
     const path = req.file?.path;
-    res.status(200).json(model.addBook({ fileBook: path, ...book }));
-  });
+    const book = new Book({ fileBook: path, ...req.body });
 
-const checkIfBookExists = (req, res, next) => {
-  const id = +req.params.id;
-  const book = model.getBook(id);
-  if (!book || !id || isNaN(id))
-    return res.status(404).json({ error: "Book not found" });
-  req.book = book;
-  req.id = id;
-  next();
-};
+    try {
+      await book.save();
+      res.status(200).json(book);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  });
 
 router
   .route("/books/:id")
-  .get(checkIfBookExists, (req, res) => {
-    res.status(200).json(req.book);
-  })
-  .put(checkIfBookExists, (req, res) => {
-    const id = req.id;
-    const book = req.book;
-    const path = req.file?.path;
-
-    res.status(200).json(
-      model.updateBook(id, {
-        ...req.body,
-        fileBook: path || book.fileBook,
-      })
-    );
-  })
-  .delete(checkIfBookExists, (req, res) => {
+  .get(async (req, res) => {
     const id = req.params.id;
-    model.deleteBook(id);
-    res.status(200).send("ok");
+
+    try {
+      const book = await Book.findById(id).select("-__v");
+      res.status(200).json(book);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  })
+  .put(async (req, res) => {
+    const id = req.params.id;
+    const path = req.file?.path;
+    try {
+      const book = await Book.findByIdAndUpdate(
+        id,
+        path
+          ? {
+              ...req.body,
+              fileBook: path,
+            }
+          : req.body
+      );
+      res.status(200).json(book);
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  })
+  .delete(async (req, res) => {
+    const id = req.params.id;
+
+    try {
+      await Book.findByIdAndRemove(id);
+      res.status(200).json("ok");
+    } catch (e) {
+      res.status(500).json(e);
+    }
   });
 
-router.get("/books/:id/download", (req, res) => {
+router.get("/books/:id/download", async (req, res) => {
   const id = req.params.id;
-  const book = model.getBook(id);
-  if (!book?.fileBook)
-    return res.status(404).json({ error: "Book file not found" });
-  res.download(book.fileBook);
+  try {
+    const book = await Book.findById(id).select("-__v");
+    if (!book?.fileBook)
+      return res.status(404).json({ error: "Book file not found" });
+    res.download(book.fileBook);
+  } catch (e) {
+    res.status(500).json(e);
+  }
 });
 
 module.exports = router;

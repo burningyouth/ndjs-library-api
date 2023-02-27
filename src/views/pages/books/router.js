@@ -1,19 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const model = require("../../../models/books");
+const Book = require("../../../models/books");
 const counter = require("../../../models/counter");
 
-const transformId = (req, res, next) => {
-  const id = +req.params.id;
-  const book = model.getBook(id);
-  if (!book || !id || isNaN(id))
-    return res.status(404).json({ error: "Book not found" });
-  req.book = book;
+const transformId = async (req, res, next) => {
+  const id = req.params.id;
+  try {
+    const book = await Book.findById(id);
+    if (!book || !id) return res.status(404).json({ error: "Book not found" });
+    req.book = book;
+  } catch (e) {
+    res.status(500).json(e);
+  }
   next();
 };
 
 router.get("/", async (_, res) => {
-  res.render("pages/books/index", { books: model.getBooks() });
+  try {
+    const books = await Book.find();
+    res.render("pages/books/index", { books: books });
+  } catch (e) {
+    res.status(500).json(e);
+  }
 });
 
 router.get("/create", (_, res) => {
