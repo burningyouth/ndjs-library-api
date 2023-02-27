@@ -1,16 +1,26 @@
 const express = require("express");
-const api = require("./routes/api");
-const ui = require("./routes/ui");
-const error404 = require("./middlewares/404");
 const path = require("path");
-const app = express();
+const booksView = require("./views/pages/books/router");
+const auth = require("./api/routes/auth");
+const books = require("./api/routes/books");
+const counter = require("./api/routes/counter");
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "/uploads/")));
-app.use("/api", api);
-app.use("/", ui);
-app.use(error404);
+const app = express();
+const PORT = process.env.PORT || 3000;
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "/uploads/")));
 
-app.listen(3000, () => console.log("Server started on port 3000"));
+//view
+app.use("/", booksView);
+
+//api
+app.use("/api", auth);
+app.use("/api", books);
+app.use("/api", counter);
+
+//app.use(error404);
+
+app.listen(PORT, () => console.log(`App started on port ${PORT}`));

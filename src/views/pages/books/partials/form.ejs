@@ -1,6 +1,4 @@
-<form
-  id="form"
->
+<form id="form">
   <div class="mb-3">
     <label for="title" class="form-label">Title</label>
     <input
@@ -28,16 +26,10 @@
   <% if (!book) { %>
   <div class="mb-3">
     <label for="formFile" class="form-label">File book</label>
-    <input
-      class="form-control"
-      type="file"
-      id="formFile"
-    />
+    <input class="form-control" type="file" id="formFile" />
   </div>
   <% } %>
-  <button type="submit" class="btn btn-primary">
-    Submit
-  </button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 <script>
@@ -47,26 +39,27 @@
     const authors = document.querySelector("#authors").value;
     const description = document.querySelector("#description").value;
     const fileBook = document.querySelector("#formFile")?.value;
+
     const data = {
       title,
       description,
       fileBook,
-      authors
+      authors,
     };
-    const formData  = new FormData();
-    for(const name in data) {
+    const formData = new FormData();
+    for (const name in data) {
       formData.append(name, data[name]);
     }
     fetch("/api/books<%= book ? `/${book.id}` : '' %>", {
       method: "<%= book ? `put` : 'post' %>",
       body: formData,
     })
-    .then((res)=> {
-      if (res.status >= 400) {
-        throw new Error(res.statusText);
-      }
-      //window.location.href = "/"
-    })
-    .catch((data) => console.error(data));
+      .then((res) => {
+        if (res.status >= 400) {
+          throw new Error(res.statusText);
+        }
+        //window.location.href = "/";
+      })
+      .catch((data) => console.error(data));
   });
 </script>

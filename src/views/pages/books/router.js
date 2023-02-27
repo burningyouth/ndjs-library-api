@@ -1,7 +1,7 @@
 const express = require("express");
-const model = require("../../models/books");
-
 const router = express.Router();
+const model = require("../../../models/books");
+const counter = require("../../../models/counter");
 
 const transformId = (req, res, next) => {
   const id = +req.params.id;
@@ -12,26 +12,26 @@ const transformId = (req, res, next) => {
   next();
 };
 
-router.get("/", (_, res) => {
+router.get("/", async (_, res) => {
   res.render("pages/books/index", { books: model.getBooks() });
 });
 
 router.get("/create", (_, res) => {
-  res.render("pages/books/create", { create: model.addBook });
+  res.render("pages/books/create");
 });
 
-router.get("/:id", transformId, (req, res) => {
-  res.render("pages/books/view", { book: req.book });
+router.get("/:id", transformId, async (req, res) => {
+  res.render("pages/books/view", {
+    book: req.book,
+    count: +(await counter.getCount(req.book.id)) + 1,
+  });
+  counter.increment(req.book.id);
 });
 
 router.get("/update/:id", transformId, (req, res) => {
   res.render("pages/books/update", {
     book: req.book,
   });
-});
-
-router.get("*", transformId, (req, res) => {
-  res.render("pages/404");
 });
 
 module.exports = router;
