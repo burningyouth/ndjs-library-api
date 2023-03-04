@@ -1,14 +1,24 @@
 services:
-  storage:
+  redis:
     image: redis:7.0.8-alpine
     volumes:
-      - ./data:/data
-
+      - ./data/redis:/data
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - ./data/mongo:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
   view:
     image: node:19-alpine
     environment:
       - PORT=3000
-      - REDIS_URL=redis://storage
+      - REDIS_URL=redis://redis
+      - MONGO_URL=mongodb://root:example@mongo:27017
     ports:
       - 3000:3000
     working_dir: /app
@@ -16,4 +26,5 @@ services:
       - .:/app
     command: yarn dev
     depends_on:
-      - storage
+      - mongo
+      - redis
