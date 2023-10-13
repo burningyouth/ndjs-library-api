@@ -6,6 +6,7 @@
   "author": "Nikita Sokolov <mr.sokolov99@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "build": "./node_modules/.bin/tsc --project ./tsconfig.json --watch",
     "start": "pm2 start src/index.js",
     "dev": "nodemon src/index.js"
   },
@@ -19,6 +20,11 @@
     "redis": "^4.6.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "@types/node": "^20.8.5",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "eslint": "^8.51.0",
+    "nodemon": "^2.0.20",
+    "typescript": "^5.2.2"
   }
 }
