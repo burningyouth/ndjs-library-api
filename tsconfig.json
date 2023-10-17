@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "NodeNext",
+    "rootDir": "./src",
+    "strict": true,
+    "strictNullChecks": false
+  },
+  "include": ["./src/**/*.ts"]
+}

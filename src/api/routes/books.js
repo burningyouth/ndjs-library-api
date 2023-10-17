@@ -1,6 +1,6 @@
 const express = require("express");
 const fileMulter = require("../middlewares/files");
-const Book = require("../../models/books");
+const Book = require("../../models/books/books");
 
 const router = express.Router();
 
