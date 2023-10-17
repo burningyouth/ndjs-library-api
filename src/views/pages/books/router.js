@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Book = require("../../../models/books/books");
+const Book = require("../../../models/books");
 const counter = require("../../../models/counter");
 
 const transformId = async (req, res, next) => {

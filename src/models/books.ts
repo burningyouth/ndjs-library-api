@@ -1,3 +1,4 @@
+import { injectable } from "inversify";
 import { Schema, model } from "mongoose";
 
 interface IBook {
@@ -36,16 +37,18 @@ const bookSchema = new Schema<IBook>({
 
 const BookModel = model("Book", bookSchema);
 
-export abstract class BooksRepository {
+@injectable()
+export class BooksRepository {
   getBooks() {
     return BookModel.find().select("-__v");
   }
   getBook(id: Id) {
     return BookModel.findById(id).select("-__v");
   }
-  createBook(book: IBook) {
+  async createBook(book: IBook) {
     const newBook = new BookModel(book);
-    return newBook.save();
+    await newBook.save();
+    return newBook;
   }
   updateBook(id: Id, book: IBook) {
     return BookModel.findByIdAndUpdate(id, book);
