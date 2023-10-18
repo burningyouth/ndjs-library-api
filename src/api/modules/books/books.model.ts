@@ -1,12 +1,13 @@
 import { Schema, model } from "mongoose";
 
-interface IBook {
+export interface IBook {
   title: string;
   description: string;
   authors: string;
   favorite?: string;
   fileCover?: string;
   fileName?: string;
+  fileBook?: string;
 }
 
 const bookSchema = new Schema<IBook>({
@@ -34,23 +35,4 @@ const bookSchema = new Schema<IBook>({
   },
 });
 
-const BookModel = model("Book", bookSchema);
-
-export abstract class BooksRepository {
-  getBooks() {
-    return BookModel.find().select("-__v");
-  }
-  getBook(id: Id) {
-    return BookModel.findById(id).select("-__v");
-  }
-  createBook(book: IBook) {
-    const newBook = new BookModel(book);
-    return newBook.save();
-  }
-  updateBook(id: Id, book: IBook) {
-    return BookModel.findByIdAndUpdate(id, book);
-  }
-  deleteBook(id: Id) {
-    return BookModel.findByIdAndRemove(id);
-  }
-}
+export const BookModel = model("Book", bookSchema);

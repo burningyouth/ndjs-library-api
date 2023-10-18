@@ -3,5 +3,5 @@ uploads/**/*
 !uploads/.gitkeep
 *.rdb
 .DS_Store
-
+./dist
 data
