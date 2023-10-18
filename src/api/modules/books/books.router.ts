@@ -1,15 +1,14 @@
-const express = require("express");
-const fileMulter = require("../middlewares/files");
-const container = require("../../models/inversify.config");
-const BooksRepository = require("../../models/books");
+import express from "express";
+import { fileMulter } from "../../middlewares/files";
+import { container } from "../../inversify.container";
+import { BooksRepository } from "./books.service";
 
 const router = express.Router();
-
-const repo = container.get(BooksRepository);
 
 router
   .route("/books")
   .get(async (_, res) => {
+    const repo = container.get(BooksRepository);
     try {
       const books = await repo.getBooks();
       res.status(200).json(books);
@@ -18,6 +17,8 @@ router
     }
   })
   .post(fileMulter.single("fileBook"), async (req, res) => {
+    const repo = container.get(BooksRepository);
+
     if (!req.body) return res.status(400).json({ error: "Book not given" });
     const path = req.file?.path;
     try {
@@ -31,6 +32,8 @@ router
 router
   .route("/books/:id")
   .get(async (req, res) => {
+    const repo = container.get(BooksRepository);
+
     const id = req.params.id;
 
     try {
@@ -41,6 +44,8 @@ router
     }
   })
   .put(async (req, res) => {
+    const repo = container.get(BooksRepository);
+
     const id = req.params.id;
     const path = req.file?.path;
     try {
@@ -60,6 +65,7 @@ router
   })
   .delete(async (req, res) => {
     const id = req.params.id;
+    const repo = container.get(BooksRepository);
 
     try {
       await repo.deleteBook(id);
@@ -71,6 +77,8 @@ router
 
 router.get("/books/:id/download", async (req, res) => {
   const id = req.params.id;
+  const repo = container.get(BooksRepository);
+
   try {
     const book = await repo.getBook(id);
     if (!book?.fileBook)
@@ -81,4 +89,4 @@ router.get("/books/:id/download", async (req, res) => {
   }
 });
 
-module.exports = router;
+export const BooksRouter = router;

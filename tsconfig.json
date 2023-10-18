@@ -8,8 +8,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "rootDir": "./src",
+    "outDir": "./dist",
     "strict": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "esModuleInterop": true
   },
   "include": ["./src/**/*.ts"]
 }

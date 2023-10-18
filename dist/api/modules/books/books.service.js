@@ -44,40 +44,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BooksRepository = void 0;
 var inversify_1 = require("inversify");
-var mongoose_1 = require("mongoose");
-var bookSchema = new mongoose_1.Schema({
-    title: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    authors: {
-        type: String,
-        required: true,
-    },
-    favorite: {
-        type: String,
-        default: "No",
-    },
-    fileCover: {
-        type: String,
-    },
-    fileName: {
-        type: String,
-    },
-});
-var BookModel = (0, mongoose_1.model)("Book", bookSchema);
+var books_model_1 = require("./books.model");
+require("reflect-metadata");
 var BooksRepository = /** @class */ (function () {
     function BooksRepository() {
     }
     BooksRepository.prototype.getBooks = function () {
-        return BookModel.find().select("-__v");
+        return books_model_1.BookModel.find().select("-__v");
     };
     BooksRepository.prototype.getBook = function (id) {
-        return BookModel.findById(id).select("-__v");
+        return books_model_1.BookModel.findById(id).select("-__v");
     };
     BooksRepository.prototype.createBook = function (book) {
         return __awaiter(this, void 0, void 0, function () {
@@ -85,7 +61,7 @@ var BooksRepository = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        newBook = new BookModel(book);
+                        newBook = new books_model_1.BookModel(book);
                         return [4 /*yield*/, newBook.save()];
                     case 1:
                         _a.sent();
@@ -95,10 +71,10 @@ var BooksRepository = /** @class */ (function () {
         });
     };
     BooksRepository.prototype.updateBook = function (id, book) {
-        return BookModel.findByIdAndUpdate(id, book);
+        return books_model_1.BookModel.findByIdAndUpdate(id, book);
     };
     BooksRepository.prototype.deleteBook = function (id) {
-        return BookModel.findByIdAndRemove(id);
+        return books_model_1.BookModel.findByIdAndRemove(id);
     };
     BooksRepository = __decorate([
         (0, inversify_1.injectable)()
